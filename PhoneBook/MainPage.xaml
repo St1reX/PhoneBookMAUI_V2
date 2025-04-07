@@ -30,7 +30,7 @@
                 Text="Dodaj"
                 Clicked="AddPerson_Clicked"
                 WidthRequest="300"
-                Margin="0,20,0,0"/>
+                Margin="0,25,0,50"/>
 
             <Label 
                 Text="Wyszukaj Kontakt: "
@@ -39,9 +39,17 @@
         
             <SearchBar 
                 WidthRequest="300"
-                Margin="0,0,0,50"/>
+                Margin="0,0,0,25"
+                x:Name="search_bar"
+                SearchButtonPressed="SearchBar_SearchButtonPressed"/>
 
-            <CollectionView ItemsSource="{Binding Contacts}" ItemsLayout="VerticalGrid,3">
+            <Button 
+                Text="Reset filtering"
+                Clicked="ResetFilter_Clicked"
+                WidthRequest="300"
+                Margin="0,0,0,100"/>
+
+            <CollectionView x:Name="contacts_collection" ItemsSource="{Binding Contacts}" ItemsLayout="VerticalGrid,3">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame>

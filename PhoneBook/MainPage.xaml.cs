@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.VisualBasic;
+using System.Collections.ObjectModel;
 
 namespace PhoneBook
 {
@@ -48,6 +49,29 @@ namespace PhoneBook
             {
                 await Navigation.PushModalAsync(new EditDataPage(selectedPerson));
             }
+        }
+
+        private void SearchBar_SearchButtonPressed(object sender, EventArgs e)
+        {
+            var searchString = search_bar.Text.ToLower();
+            var collectionView = contacts_collection;
+
+            var filteredContacts = Contacts.Where(c => c.FirstName.ToLower().Contains(searchString) || c.LastName.ToLower().Contains(searchString)).ToList();
+
+            collectionView.BindingContext = new
+            {
+                Contacts = filteredContacts
+            };
+        }
+
+        private void ResetFilter_Clicked(object sender, EventArgs e)
+        {
+            var collectionView = contacts_collection;
+
+            collectionView.BindingContext = new
+            {
+                Contacts = Contacts
+            };
         }
     }
 
