@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PhoneBook.MainPage"
+             xmlns:local="clr-namespace:PhoneBook">
+    
+    <ScrollView>
+        <StackLayout WidthRequest="800">
+            <Label 
+                Text="Phone Book" 
+                FontSize="Large" 
+                HorizontalOptions="Center"/>
+
+            <Label 
+                Text="Imie: "
+                WidthRequest="300"/>
+            <Entry x:Name="FirstNameEntry" WidthRequest="300"/>
+
+            <Label 
+                Text="Nazwisko: "
+                WidthRequest="300"/>
+            <Entry x:Name="LastNameEntry" WidthRequest="300"/>
+
+            <Label 
+                Text="Numer telefonu: "
+                WidthRequest="300"/>
+            <Entry x:Name="PhoneNumberEntry" WidthRequest="300"/>
+
+            <Button 
+                Text="Dodaj"
+                Clicked="AddPerson_Clicked"
+                WidthRequest="300"
+                Margin="0,20,0,0"/>
+
+            <Label 
+                Text="Wyszukaj Kontakt: "
+                WidthRequest="300"
+                Margin="0,20,0,0"/>
+        
+            <SearchBar 
+                WidthRequest="300"
+                Margin="0,0,0,50"/>
+
+            <CollectionView ItemsSource="{Binding Contacts}" ItemsLayout="VerticalGrid,3">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Label Grid.Column="0" Grid.Row="0" Text="Imie: "></Label>
+                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding FirstName}" Margin="5,0,0,0"></Label>
+                                <Label Grid.Column="0" Grid.Row="1" Text="Nazwisko: "></Label>
+                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding LastName}" Margin="5,0,0,0"></Label>
+                                <Label Grid.Column="0" Grid.Row="2" Text="Numer Telefonu: "></Label>
+                                <Label Grid.Column="1" Grid.Row="2" Text="{Binding PhoneNumber}" Margin="5,0,0,0"></Label>
+                                <Button Grid.Column="0" Grid.Row="3" Clicked="ClearContact_Clicked" Text="Usun" 
+                                        BackgroundColor="Red" TextColor="White" Margin="0,5,0,0"/>
+                                <Button Grid.Column="1" Grid.Row="3" Clicked="OnEditButtonClicked" Text="Modyfikuj" 
+                                        BackgroundColor="Blue" TextColor="White" Margin="0,5,0,0"/>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
