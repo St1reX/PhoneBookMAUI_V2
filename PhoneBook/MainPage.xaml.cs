@@ -21,14 +21,14 @@ namespace PhoneBook
         {
             try
             {
-                Contacts.Add(new Person { FirstName = FirstNameEntry.Text, LastName = LastNameEntry.Text, PhoneNumber = PhoneNumberEntry.Text });
+                Contacts.Add(new Person (FirstNameEntry.Text, LastNameEntry.Text, PhoneNumberEntry.Text));
                 FirstNameEntry.Text = string.Empty;
                 LastNameEntry.Text = string.Empty;
                 PhoneNumberEntry.Text = string.Empty;
             }
             catch (ArgumentException ex)
             {
-                DisplayAlert("Error", ex.Message, "OK");
+                DisplayAlert("Error occurred while adding new contact.", ex.Message, "Continue");
             }
             BindingContext = this;
         }
@@ -39,15 +39,6 @@ namespace PhoneBook
             if (Contacts.Contains(personToRemove))
             {
                 Contacts.Remove(personToRemove);
-            }
-        }
-
-        private async void OnEditButtonClicked(object sender, EventArgs e)
-        {
-            var selectedPerson = (Person)((Button)sender).BindingContext;
-            if (selectedPerson != null)
-            {
-                await Navigation.PushModalAsync(new EditDataPage(selectedPerson));
             }
         }
 
@@ -73,16 +64,32 @@ namespace PhoneBook
                 Contacts = Contacts
             };
         }
+
+        private async void OnEditButtonClicked(object sender, EventArgs e)
+        {
+            var selectedPerson = (Person)((Button)sender).BindingContext;
+            if (selectedPerson != null)
+            {
+                await Navigation.PushModalAsync(new EditDataPage(selectedPerson));
+            }
+        }
+
+        protected void SaveCollectionChanges(Person modifiedPerson, int indexToChange)
+        {
+            Contacts[indexToChange] = modifiedPerson;
+        }
     }
 
     public class EditDataPage : ContentPage
     {
         public Person PersonToEdit { get; set; }
+        private Person OriginalPerson { get; set; }
 
         public EditDataPage(Person person)
         {
-            PersonToEdit = person;
-            BindingContext = this;
+            OriginalPerson = person;
+            PersonToEdit = new Person(person.FirstName, person.LastName, person.PhoneNumber);
+            BindingContext = PersonToEdit;
 
             var titleLabel = new Label
             {
@@ -100,9 +107,10 @@ namespace PhoneBook
             var firstNameEntry = new Entry
             {
                 Placeholder = "Imię",
-                WidthRequest = 300
+                WidthRequest = 300,
+                Text = PersonToEdit.FirstName
             };
-            firstNameEntry.SetBinding(Entry.TextProperty, "PersonToEdit.FirstName");
+            firstNameEntry.SetBinding(Entry.TextProperty, nameof(Person.FirstName));
 
             var lastNameLabel = new Label
             {
@@ -113,9 +121,10 @@ namespace PhoneBook
             var lastNameEntry = new Entry
             {
                 Placeholder = "Nazwisko",
-                WidthRequest = 300
+                WidthRequest = 300,
+                Text = PersonToEdit.LastName
             };
-            lastNameEntry.SetBinding(Entry.TextProperty, "PersonToEdit.LastName");
+            lastNameEntry.SetBinding(Entry.TextProperty, nameof(Person.LastName));
 
             var phoneNumberLabel = new Label
             {
@@ -126,17 +135,22 @@ namespace PhoneBook
             var phoneNumberEntry = new Entry
             {
                 Placeholder = "Numer telefonu",
-                WidthRequest = 300
+                WidthRequest = 300,
+                Text = PersonToEdit.PhoneNumber
             };
-            phoneNumberEntry.SetBinding(Entry.TextProperty, "PersonToEdit.PhoneNumber");
+            phoneNumberEntry.SetBinding(Entry.TextProperty, nameof(Person.PhoneNumber));
 
             var saveButton = new Button
             {
                 Text = "Zapisz",
                 Margin = new Thickness(0, 20, 0, 0),
             };
-            saveButton.Clicked += async (s, e) =>
-            { 
+            saveButton.Clicked += async (sender, event_) =>
+            {
+                OriginalPerson.FirstName = PersonToEdit.FirstName;
+                OriginalPerson.LastName = PersonToEdit.LastName;
+                OriginalPerson.PhoneNumber = PersonToEdit.PhoneNumber;
+
                 await Navigation.PopModalAsync();
             };
 

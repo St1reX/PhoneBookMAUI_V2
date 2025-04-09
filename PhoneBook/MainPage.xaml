@@ -12,28 +12,28 @@
                 HorizontalOptions="Center"/>
 
             <Label 
-                Text="Imie: "
+                Text="Name: "
                 WidthRequest="300"/>
             <Entry x:Name="FirstNameEntry" WidthRequest="300"/>
 
             <Label 
-                Text="Nazwisko: "
+                Text="Surname: "
                 WidthRequest="300"/>
             <Entry x:Name="LastNameEntry" WidthRequest="300"/>
 
             <Label 
-                Text="Numer telefonu: "
+                Text="Phone Number: "
                 WidthRequest="300"/>
             <Entry x:Name="PhoneNumberEntry" WidthRequest="300"/>
 
             <Button 
-                Text="Dodaj"
+                Text="Add"
                 Clicked="AddPerson_Clicked"
                 WidthRequest="300"
                 Margin="0,25,0,50"/>
 
             <Label 
-                Text="Wyszukaj Kontakt: "
+                Text="Search Contact: "
                 WidthRequest="300"
                 Margin="0,20,0,0"/>
         
