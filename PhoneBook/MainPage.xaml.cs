@@ -70,88 +70,105 @@ namespace PhoneBook
             var selectedPerson = (Person)((Button)sender).BindingContext;
             if (selectedPerson != null)
             {
-                await Navigation.PushModalAsync(new EditDataPage(selectedPerson));
+                await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson)));
             }
+
+            BindingContext = this;
         }
 
-        protected void SaveCollectionChanges(Person modifiedPerson, int indexToChange)
+        protected int FindIndexToModify(Person personToFind)
         {
-            Contacts[indexToChange] = modifiedPerson;
+            int index = 0;
+
+            foreach(var contact in Contacts)
+            {
+                if(contact.FirstName == personToFind.FirstName && contact.LastName == personToFind.LastName)
+                {
+                    return index;
+                }
+                index++;
+            }
+
+            return -1;
         }
     }
 
     public class EditDataPage : ContentPage
     {
-        public Person PersonToEdit { get; set; }
-        private Person OriginalPerson { get; set; }
+        private Person PersonToEdit { get; set; }
 
-        public EditDataPage(Person person)
+        public EditDataPage(ObservableCollection<Person> contacts, int indexToEdit)
         {
-            OriginalPerson = person;
-            PersonToEdit = new Person(person.FirstName, person.LastName, person.PhoneNumber);
-            BindingContext = PersonToEdit;
+            PersonToEdit = contacts[indexToEdit];
 
             var titleLabel = new Label
             {
-                Text = "Edytuj dane",
+                Text = "Edit data",
                 FontSize = 18,
                 HorizontalOptions = LayoutOptions.Center
             };
 
             var firstNameLabel = new Label
             {
-                Text = "Imię",
+                Text = "Name",
                 HorizontalOptions = LayoutOptions.Center
             };
 
             var firstNameEntry = new Entry
             {
-                Placeholder = "Imię",
+                Placeholder = "Name",
                 WidthRequest = 300,
                 Text = PersonToEdit.FirstName
             };
-            firstNameEntry.SetBinding(Entry.TextProperty, nameof(Person.FirstName));
 
             var lastNameLabel = new Label
             {
-                Text = "Nazwisko",
+                Text = "Surname",
                 HorizontalOptions = LayoutOptions.Center
             };
 
             var lastNameEntry = new Entry
             {
-                Placeholder = "Nazwisko",
+                Placeholder = "Surname",
                 WidthRequest = 300,
                 Text = PersonToEdit.LastName
             };
-            lastNameEntry.SetBinding(Entry.TextProperty, nameof(Person.LastName));
 
             var phoneNumberLabel = new Label
             {
-                Text = "Numer telefonu",
+                Text = "Phone number",
                 HorizontalOptions = LayoutOptions.Center
             };
 
             var phoneNumberEntry = new Entry
             {
-                Placeholder = "Numer telefonu",
+                Placeholder = "Phone number",
                 WidthRequest = 300,
                 Text = PersonToEdit.PhoneNumber
             };
-            phoneNumberEntry.SetBinding(Entry.TextProperty, nameof(Person.PhoneNumber));
+
 
             var saveButton = new Button
             {
-                Text = "Zapisz",
+                Text = "Save Changes",
                 Margin = new Thickness(0, 20, 0, 0),
             };
             saveButton.Clicked += async (sender, event_) =>
             {
-                OriginalPerson.FirstName = PersonToEdit.FirstName;
-                OriginalPerson.LastName = PersonToEdit.LastName;
-                OriginalPerson.PhoneNumber = PersonToEdit.PhoneNumber;
 
-                await Navigation.PopModalAsync();
+                try
+                {
+                    contacts[indexToEdit].FirstName = firstNameEntry.Text;
+                    contacts[indexToEdit].LastName = lastNameEntry.Text;
+                    contacts[indexToEdit].PhoneNumber = phoneNumberEntry.Text;
+
+                    await Navigation.PopModalAsync();
+                }
+                catch (ArgumentException ex)
+                {
+                    await DisplayAlert("Error occurred while editing contact new contact.", ex.Message, "Continue");
+                    return;
+                }
             };
 
             Content = new StackLayout
