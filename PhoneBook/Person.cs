@@ -8,13 +8,13 @@ namespace PhoneBook
 {
     public class Person : INotifyPropertyChanged
     {
-        private string _firstName;
-        private string _lastName;
-        private string _phoneNumber;
+        private string _firstName = default!;
+        private string _lastName = default!;
+        private string _phoneNumber = default!;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         public string FirstName
@@ -60,7 +60,7 @@ namespace PhoneBook
         private void ValidateFirstName(string firstName)
         {
             Regex regex = new Regex(@"^[A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+(?: [A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+)*$");
-            if (!regex.IsMatch(firstName))
+            if (String.IsNullOrEmpty(firstName) || !regex.IsMatch(firstName))
             {
                 throw new ArgumentException("First name must start with a capital letter and contain only letters. Compound names are allowed.");
             }
@@ -69,7 +69,7 @@ namespace PhoneBook
         private void ValidateLastName(string lastName)
         {
             Regex regex = new Regex(@"^[A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+(?:[-'][A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+)*$");
-            if (!regex.IsMatch(lastName))
+            if (String.IsNullOrEmpty(lastName) || !regex.IsMatch(lastName))
             {
                 throw new ArgumentException("Last name must start with a capital letter and contain only letters. Compound last names are allowed.");
             }
@@ -78,6 +78,11 @@ namespace PhoneBook
         private void ValidatePhoneNumber(string phoneNumber)
         {
             var phoneAttr = new PhoneAttribute();
+
+            if (String.IsNullOrEmpty(phoneNumber))
+            {
+                throw new ArgumentException("Phone number cannot be empty.");
+            }
 
             if (phoneNumber.Length > 15)
             {

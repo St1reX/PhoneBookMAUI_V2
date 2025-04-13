@@ -71,18 +71,6 @@ namespace PhoneBook
             };
         }
 
-        private async void OnEditButtonClicked(object sender, EventArgs e)
-        {
-            var selectedPerson = (Person)((Button)sender).BindingContext;
-            if (selectedPerson != null)
-            {
-                await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson)));
-            }
-
-            BindingContext = this;
-        }
-
-
         //MODIFY
         protected int FindIndexToModify(Person personToFind)
         {
@@ -99,6 +87,16 @@ namespace PhoneBook
 
             return -1;
         }
+
+        private async void OnEditButtonClicked(object sender, EventArgs e)
+        {
+            var selectedPerson = (Person)((Button)sender).BindingContext;
+            if (selectedPerson != null)
+            {
+                await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson)));
+            }
+        }
+
     }
 
 
@@ -176,7 +174,7 @@ namespace PhoneBook
                 }
                 catch (ArgumentException ex)
                 {
-                    await DisplayAlert("Error occurred while editing contact new contact.", ex.Message, "Continue");
+                    await DisplayAlert("Error occurred while editing contact.", ex.Message, "Continue");
                     return;
                 }
             };
