@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace PhoneBook
 {
@@ -19,82 +15,78 @@ namespace PhoneBook
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         public string FirstName
         {
-            get { return _firstName; }
+            get => _firstName;
             set
             {
-                FirstNameValidation(value);
-                OnPropertyChanged();
+                ValidateFirstName(value);
                 _firstName = value;
+                OnPropertyChanged();
             }
         }
 
         public string LastName
         {
-            get { return _lastName; }
+            get => _lastName;
             set
             {
-                LastNameValidation(value);
-                OnPropertyChanged();
+                ValidateLastName(value);
                 _lastName = value;
+                OnPropertyChanged();
             }
         }
 
         public string PhoneNumber
         {
-            get { return _phoneNumber; }
+            get => _phoneNumber;
             set
             {
-                PhoneNumberValidation(value);
-                OnPropertyChanged();
+                ValidatePhoneNumber(value);
                 _phoneNumber = value;
+                OnPropertyChanged();
             }
         }
 
         public Person(string firstName, string lastName, string phoneNumber)
         {
-            _firstName = firstName;
-            _lastName = lastName;
-            _phoneNumber = phoneNumber;
+            FirstName = firstName;
+            LastName = lastName;
+            PhoneNumber = phoneNumber;
         }
 
-        private void LastNameValidation(string lastName)
+        private void ValidateFirstName(string firstName)
         {
-            Regex regexPattern = new Regex(@"^[A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+(?:[-'][A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+)*$");
-
-            if (!regexPattern.IsMatch(lastName))
+            Regex regex = new Regex(@"^[A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+(?: [A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+)*$");
+            if (!regex.IsMatch(firstName))
             {
-                throw new ArgumentException("Last name must start with a capital letter and consist only of letters. Compound last names are also allowed.");
+                throw new ArgumentException("First name must start with a capital letter and contain only letters. Compound names are allowed.");
             }
         }
 
-        private void PhoneNumberValidation(string phoneNumber)
+        private void ValidateLastName(string lastName)
         {
-            Regex regexPattern = new Regex(@"^(\+48)?\s?(\d{3})[\s\-]?\d{3}[\s\-]?\d{3}$");
-
-            if (phoneNumber.Length >= 12)
+            Regex regex = new Regex(@"^[A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+(?:[-'][A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+)*$");
+            if (!regex.IsMatch(lastName))
             {
-                throw new ArgumentException("Phone number must be 10 digits long.");
-            }
-
-            if (!regexPattern.IsMatch(phoneNumber))
-            {
-                throw new ArgumentException("Phone number must be in format: 123 456 789 or 123-456-789 or 123-456-789 or +48 123 456 789.");
+                throw new ArgumentException("Last name must start with a capital letter and contain only letters. Compound last names are allowed.");
             }
         }
 
-        private void FirstNameValidation(string firstName)
+        private void ValidatePhoneNumber(string phoneNumber)
         {
-            Regex regexPattern = new Regex(@"^[A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+(?:\s[A-ZĄĆĘŁŃÓŚŻŹ][a-ząćęłńóśżź]+)*$");
+            var phoneAttr = new PhoneAttribute();
 
-            if (!regexPattern.IsMatch(firstName))
+            if (phoneNumber.Length > 15)
             {
-                throw new ArgumentException("First name must start with a capital letter and consist only of letters. Compound first names are also allowed.");
+                throw new ArgumentException("Phone number is too long.");
+            }
+
+            if (!phoneAttr.IsValid(phoneNumber))
+            {
+                throw new ArgumentException("Enter a valid phone number, e.g., +48 123 456 789.");
             }
         }
     }

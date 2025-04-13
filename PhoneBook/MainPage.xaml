@@ -9,76 +9,101 @@
             <Label 
                 Text="Phone Book" 
                 FontSize="Large" 
-                HorizontalOptions="Center"/>
+                HorizontalOptions="Center"
+                Margin="0,0,0,5"/>
 
-            <Label 
-                Text="Name: "
-                WidthRequest="300"/>
-            <Entry x:Name="FirstNameEntry" WidthRequest="300"/>
+            <FlexLayout  Margin="0,0,0,25" JustifyContent="SpaceBetween">
+                <StackLayout VerticalOptions="Center">
+                    <Label 
+                        Text="Name: "
+                        WidthRequest="300"/>        
+                    <Entry x:Name="FirstNameEntry" WidthRequest="300"/>
 
-            <Label 
-                Text="Surname: "
-                WidthRequest="300"/>
-            <Entry x:Name="LastNameEntry" WidthRequest="300"/>
+                    <Label 
+                        Text="Surname: "
+                        WidthRequest="300"/>        
+                    <Entry x:Name="LastNameEntry" WidthRequest="300"/>
 
-            <Label 
-                Text="Phone Number: "
-                WidthRequest="300"/>
-            <Entry x:Name="PhoneNumberEntry" WidthRequest="300"/>
+                    <Label 
+                        Text="Phone Number: "
+                        WidthRequest="300"/>
+                    <Entry x:Name="PhoneNumberEntry" WidthRequest="300"/>
 
-            <Button 
-                Text="Add"
-                Clicked="AddPerson_Clicked"
-                WidthRequest="300"
-                Margin="0,25,0,50"/>
+                    <Button 
+                        Text="Add"
+                        Clicked="AddPerson_Clicked"
+                        WidthRequest="300"
+                        Margin="0,25,0,0"/>
+                </StackLayout>
 
-            <Label 
-                Text="Search Contact: "
-                WidthRequest="300"
-                Margin="0,20,0,0"/>
-        
-            <SearchBar 
-                WidthRequest="300"
-                Margin="0,0,0,25"
-                x:Name="search_bar"
-                SearchButtonPressed="SearchBar_SearchButtonPressed"/>
 
-            <Button 
-                Text="Reset filtering"
-                Clicked="ResetFilter_Clicked"
-                WidthRequest="300"
-                Margin="0,0,0,100"/>
+                <StackLayout VerticalOptions="Center">
+                    <Label 
+                        Text="Search Contact: "
+                        WidthRequest="300"/>
+                        
+
+                    <SearchBar 
+                        WidthRequest="300"
+                        Margin="0,0,0,25"
+                        x:Name="search_bar"
+                        SearchButtonPressed="SearchBar_SearchButtonPressed"/>
+
+                    <Button 
+                        Text="Reset filtering"
+                        Clicked="ResetFilter_Clicked"
+                        WidthRequest="300"/>
+                </StackLayout>
+            </FlexLayout>
+
+
+
 
             <CollectionView x:Name="contacts_collection" ItemsSource="{Binding Contacts}" ItemsLayout="VerticalGrid,3">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame>
-                            <Grid>
+                        <Frame Margin="10" Padding="10">
+                            <Grid ColumnSpacing="10" RowSpacing="5">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"></RowDefinition>
-                                    <RowDefinition Height="*"></RowDefinition>
-                                    <RowDefinition Height="*"></RowDefinition>
-                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <Label Grid.Column="0" Grid.Row="0" Text="Imie: "></Label>
-                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding FirstName}" Margin="5,0,0,0"></Label>
-                                <Label Grid.Column="0" Grid.Row="1" Text="Nazwisko: "></Label>
-                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding LastName}" Margin="5,0,0,0"></Label>
-                                <Label Grid.Column="0" Grid.Row="2" Text="Numer Telefonu: "></Label>
-                                <Label Grid.Column="1" Grid.Row="2" Text="{Binding PhoneNumber}" Margin="5,0,0,0"></Label>
-                                <Button Grid.Column="0" Grid.Row="3" Clicked="ClearContact_Clicked" Text="Usun" 
-                                        BackgroundColor="Red" TextColor="White" Margin="0,5,0,0"/>
-                                <Button Grid.Column="1" Grid.Row="3" Clicked="OnEditButtonClicked" Text="Modyfikuj" 
-                                        BackgroundColor="Blue" TextColor="White" Margin="0,5,0,0"/>
+
+                                <!-- NAME -->
+                                <Label Grid.Column="0" Grid.Row="0" Text="Name:" 
+                           VerticalOptions="Center" HorizontalOptions="Start"/>
+                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding FirstName}" 
+                           VerticalOptions="Center" HorizontalOptions="Start" />
+
+                                <!-- SURNAME -->
+                                <Label Grid.Column="0" Grid.Row="1" Text="Surname:" 
+                           VerticalOptions="Center" HorizontalOptions="Start"/>
+                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding LastName}" 
+                           VerticalOptions="Center" HorizontalOptions="Start" />
+
+                                <!-- PHONE NUMBER -->
+                                <Label Grid.Column="0" Grid.Row="2" Text="Phone:" 
+                           VerticalOptions="Center" HorizontalOptions="Start"/>
+                                <Label Grid.Column="1" Grid.Row="2" Text="{Binding PhoneNumber}" 
+                           VerticalOptions="Center" HorizontalOptions="Start" />
+
+                                <!-- ACTION BUTTONS -->
+                                <Button Grid.Column="0" Grid.Row="3" Clicked="DeleteContact_Clicked" Text="Delete" 
+                            BackgroundColor="Red" TextColor="White" Margin="0,5,0,0"/>
+                                <Button Grid.Column="1" Grid.Row="3" Clicked="OnEditButtonClicked" Text="Modify" 
+                            BackgroundColor="Blue" TextColor="White" Margin="0,5,0,0"/>
                             </Grid>
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+
         </StackLayout>
     </ScrollView>
 </ContentPage>

@@ -11,12 +11,14 @@ namespace PhoneBook
             InitializeComponent();
             Contacts = new ObservableCollection<Person>
             {
-                new Person("Jan", "Kowalski", "123 456 789"),
-                new Person("Anna", "Nowak", "987 654 321")
+                new Person("John", "Doe", "111-222-333"),
+                new Person("Jakub", "Uryga", "444-555-666")
             };
             BindingContext = this;
         }
 
+
+        //ADDING
         private void AddPerson_Clicked(object sender, EventArgs e)
         {
             try
@@ -33,7 +35,9 @@ namespace PhoneBook
             BindingContext = this;
         }
 
-        private void ClearContact_Clicked(object sender, EventArgs e)
+
+        //DELETING
+        private void DeleteContact_Clicked(object sender, EventArgs e)
         {
             var personToRemove = (Person)((Button)sender).BindingContext;
             if (Contacts.Contains(personToRemove))
@@ -42,6 +46,8 @@ namespace PhoneBook
             }
         }
 
+
+        //FILTERING
         private void SearchBar_SearchButtonPressed(object sender, EventArgs e)
         {
             var searchString = search_bar.Text.ToLower();
@@ -76,6 +82,8 @@ namespace PhoneBook
             BindingContext = this;
         }
 
+
+        //MODIFY
         protected int FindIndexToModify(Person personToFind)
         {
             int index = 0;
@@ -93,6 +101,8 @@ namespace PhoneBook
         }
     }
 
+
+    //NEW CARD TO MODIFYING
     public class EditDataPage : ContentPage
     {
         private Person PersonToEdit { get; set; }
