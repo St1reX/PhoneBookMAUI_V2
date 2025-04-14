@@ -1,7 +1,5 @@
-﻿using Microsoft.VisualBasic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace PhoneBook
@@ -16,7 +14,7 @@ namespace PhoneBook
             get => contacts_;
             set
             {
-                contacts_ = new ObservableCollection<Person>(value.OrderBy(c => c.FirstName));
+                contacts_ = new ObservableCollection<Person>(value.OrderBy(c => c.LastName).ThenBy(c => c.FirstName));
                 OnPropertyChanged(nameof(Contacts));
             }
         }
