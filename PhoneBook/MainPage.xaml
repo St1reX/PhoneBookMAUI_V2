@@ -47,7 +47,8 @@
                         WidthRequest="300"
                         Margin="0,0,0,25"
                         x:Name="search_bar"
-                        SearchButtonPressed="SearchBar_SearchButtonPressed"/>
+                        TextChanged="FilterContacts"
+                        SearchButtonPressed="FilterContacts"/>
 
                     <Button 
                         Text="Reset filtering"
@@ -59,7 +60,7 @@
 
 
 
-            <CollectionView x:Name="contacts_collection" ItemsSource="{Binding Contacts}" ItemsLayout="VerticalGrid,3">
+            <CollectionView x:Name="contacts_collection" EmptyView="Jak nie umiesz filtrować to zgaś ten program!"  ItemsSource="{Binding Contacts}" ItemsLayout="VerticalGrid,3">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame Margin="10" Padding="10">
@@ -102,6 +103,7 @@
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
+                
             </CollectionView>
 
         </StackLayout>

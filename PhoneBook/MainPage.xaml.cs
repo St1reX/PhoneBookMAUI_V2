@@ -1,11 +1,35 @@
 ﻿using Microsoft.VisualBasic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace PhoneBook
 {
-    public partial class MainPage : ContentPage
+    public partial class MainPage : ContentPage, INotifyPropertyChanged
     {
-        public ObservableCollection<Person> Contacts { get; set; }
+        public ObservableCollection<Person> contacts_ = new ObservableCollection<Person>();
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public ObservableCollection<Person> Contacts 
+        { 
+            get => contacts_;
+            set
+            {
+                contacts_ = new ObservableCollection<Person>(value.OrderBy(c => c.FirstName));
+                OnPropertyChanged(nameof(Contacts));
+                foreach (var contact in  contacts_)
+                {
+                    Debug.WriteLine(contact.FirstName);
+                }
+            }
+        }
+
+        protected override void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
         public MainPage()
         {
             InitializeComponent();
@@ -23,7 +47,8 @@ namespace PhoneBook
         {
             try
             {
-                Contacts.Add(new Person (FirstNameEntry.Text, LastNameEntry.Text, PhoneNumberEntry.Text));
+                Contacts.Add((new Person(FirstNameEntry.Text, LastNameEntry.Text, PhoneNumberEntry.Text)));
+                Contacts = Contacts;
                 FirstNameEntry.Text = string.Empty;
                 LastNameEntry.Text = string.Empty;
                 PhoneNumberEntry.Text = string.Empty;
@@ -48,12 +73,16 @@ namespace PhoneBook
 
 
         //FILTERING
-        private void SearchBar_SearchButtonPressed(object sender, EventArgs e)
+        private void FilterContacts(object sender, EventArgs e)
         {
             var searchString = search_bar.Text.ToLower();
             var collectionView = contacts_collection;
 
-            var filteredContacts = Contacts.Where(c => c.FirstName.ToLower().Contains(searchString) || c.LastName.ToLower().Contains(searchString)).ToList();
+            var filteredContacts = Contacts
+                .Where(c => c.FirstName.ToLower().Contains(searchString) || 
+                c.LastName.ToLower().Contains(searchString) || 
+                Regex.Replace(c.PhoneNumber.ToLower(), @"\D", "").Contains(searchString))
+                .ToList();
 
             collectionView.BindingContext = new
             {
@@ -64,6 +93,7 @@ namespace PhoneBook
         private void ResetFilter_Clicked(object sender, EventArgs e)
         {
             var collectionView = contacts_collection;
+            search_bar.Text = string.Empty;
 
             collectionView.BindingContext = new
             {

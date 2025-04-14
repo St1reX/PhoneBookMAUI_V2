@@ -84,9 +84,9 @@ namespace PhoneBook
                 throw new ArgumentException("Phone number cannot be empty.");
             }
 
-            if (phoneNumber.Length > 15)
+            if (phoneNumber.Length > 15 || phoneNumber.Length < 8)
             {
-                throw new ArgumentException("Phone number is too long.");
+                throw new ArgumentException("Phone number length is incorrect.");
             }
 
             if (!phoneAttr.IsValid(phoneNumber))
