@@ -76,7 +76,7 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <!-- NAME_ -->
+                                <!-- NAME -->
                                 <Label Grid.Column="0" Grid.Row="0" Text="Name:" 
                            VerticalOptions="Center" HorizontalOptions="Start"/>
                                 <Label Grid.Column="1" Grid.Row="0" Text="{Binding FirstName}" 
