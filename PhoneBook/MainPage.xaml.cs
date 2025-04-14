@@ -18,10 +18,6 @@ namespace PhoneBook
             {
                 contacts_ = new ObservableCollection<Person>(value.OrderBy(c => c.FirstName));
                 OnPropertyChanged(nameof(Contacts));
-                foreach (var contact in  contacts_)
-                {
-                    Debug.WriteLine(contact.FirstName);
-                }
             }
         }
 

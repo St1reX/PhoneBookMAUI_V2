@@ -60,7 +60,7 @@
 
 
 
-            <CollectionView x:Name="contacts_collection" EmptyView="Jak nie umiesz filtrować to zgaś ten program!"  ItemsSource="{Binding Contacts}" ItemsLayout="VerticalGrid,3">
+            <CollectionView x:Name="contacts_collection" EmptyView="No results for provided filtering!"  ItemsSource="{Binding Contacts}" ItemsLayout="VerticalGrid,3">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame Margin="10" Padding="10">
