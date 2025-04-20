@@ -82,6 +82,14 @@ namespace PhoneBook
             {
                 Contacts = filteredContacts
             };
+
+            if(searchString == "")
+            {
+                collectionView.BindingContext = new
+                {
+                    Contacts = Contacts
+                };
+            }
         }
 
         private void ResetFilter_Clicked(object sender, EventArgs e)
@@ -117,7 +125,7 @@ namespace PhoneBook
             var selectedPerson = (Person)((Button)sender).BindingContext;
             if (selectedPerson != null)
             {
-                await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson)));
+                await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson), this));
             }
         }
 
@@ -129,7 +137,7 @@ namespace PhoneBook
     {
         private Person PersonToEdit { get; set; }
 
-        public EditDataPage(ObservableCollection<Person> contacts, int indexToEdit)
+        public EditDataPage(ObservableCollection<Person> contacts, int indexToEdit, MainPage mainPage)
         {
             PersonToEdit = contacts[indexToEdit];
 
@@ -194,6 +202,10 @@ namespace PhoneBook
                     contacts[indexToEdit].LastName = lastNameEntry.Text;
                     contacts[indexToEdit].PhoneNumber = phoneNumberEntry.Text;
 
+                    //Refresh the contacts list on the main page
+                    mainPage.Contacts = contacts;
+
+                    //Close modal
                     await Navigation.PopModalAsync();
                 }
                 catch (ArgumentException ex)
