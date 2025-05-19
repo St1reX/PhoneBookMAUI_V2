@@ -9,6 +9,8 @@ namespace PhoneBook
         public ObservableCollection<Person> contacts_ = new ObservableCollection<Person>();
         public event PropertyChangedEventHandler? PropertyChanged;
 
+
+        public Collection<Person> ContactsToDelete { get; set; }
         public ObservableCollection<Person> Contacts 
         { 
             get => contacts_;
@@ -32,36 +34,69 @@ namespace PhoneBook
                 new Person("John", "Doe", "111-222-333"),
                 new Person("Jakub", "Uryga", "444-555-666")
             };
+            ContactsToDelete = new Collection<Person>();
             BindingContext = this;
         }
 
 
         //ADDING
-        private void AddPerson_Clicked(object sender, EventArgs e)
+        private async void OnAddButtonClicked(object sender, EventArgs e)
         {
-            try
-            {
-                Contacts.Add((new Person(FirstNameEntry.Text, LastNameEntry.Text, PhoneNumberEntry.Text)));
-                Contacts = Contacts;
-                FirstNameEntry.Text = string.Empty;
-                LastNameEntry.Text = string.Empty;
-                PhoneNumberEntry.Text = string.Empty;
-            }
-            catch (ArgumentException ex)
-            {
-                DisplayAlert("Error occurred while adding new contact.", ex.Message, "Continue");
-            }
+            ContactsToDelete.Clear();   
+            await Navigation.PushModalAsync(new AddDataPage(Contacts, this));
             BindingContext = this;
         }
 
 
         //DELETING
-        private void DeleteContact_Clicked(object sender, EventArgs e)
+        private async void DeleteContact_Clicked(object sender, EventArgs e)
         {
-            var personToRemove = (Person)((Button)sender).BindingContext;
-            if (Contacts.Contains(personToRemove))
+            if (sender is Button)
             {
-                Contacts.Remove(personToRemove);
+                var button = (Button)sender;
+
+                bool confirm = await DisplayAlert("Confirm", "Delete selected contacts?", "Yes", "No");
+                if (!confirm) return;
+
+                if(ContactsToDelete.Count == 0)
+                {
+                    await DisplayAlert("Error", "No contacts selected for deletion.", "OK");
+                    return;
+                }
+
+                foreach (var PersonToDelete in ContactsToDelete)
+                {
+                    Contacts.Remove(PersonToDelete);
+                }
+                ContactsToDelete.Clear();
+            }
+            else if (sender is MenuFlyoutItem menuItem)
+            {
+                if (menuItem.CommandParameter is Person PersonToDelete)
+                {
+                    Contacts.Remove(PersonToDelete);
+
+                    if (ContactsToDelete.Contains(PersonToDelete))
+                    {
+                        ContactsToDelete.Remove(PersonToDelete);
+                    }
+                }
+            }
+        }
+        private void CheckBox_ToDelete_CheckedChanged(object sender, CheckedChangedEventArgs e)
+        {
+            if(sender is CheckBox checkBox)
+            {
+                Person PersonToDelete = (Person)checkBox.BindingContext;
+
+                if(ContactsToDelete.Contains(PersonToDelete))
+                {
+                    ContactsToDelete.Remove(PersonToDelete);
+                }
+                else
+                {
+                    ContactsToDelete.Add(PersonToDelete);
+                }
             }
         }
 
@@ -91,7 +126,6 @@ namespace PhoneBook
                 };
             }
         }
-
         private void ResetFilter_Clicked(object sender, EventArgs e)
         {
             var collectionView = contacts_collection;
@@ -119,16 +153,15 @@ namespace PhoneBook
 
             return -1;
         }
-
         private async void OnEditButtonClicked(object sender, EventArgs e)
         {
-            var selectedPerson = (Person)((Button)sender).BindingContext;
+            ContactsToDelete.Clear();
+            var selectedPerson = (Person)((MenuFlyoutItem)sender).BindingContext;
             if (selectedPerson != null)
             {
                 await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson), this));
             }
         }
-
     }
 
 
@@ -222,4 +255,90 @@ namespace PhoneBook
             };
         }
     }
+
+    //NEW CARD TO ADDING
+    public class AddDataPage : ContentPage
+    {
+        public AddDataPage(ObservableCollection<Person> contacts, MainPage mainPage)
+        {
+            var titleLabel = new Label
+            {
+                Text = "Add new contact",
+                FontSize = 18,
+                HorizontalOptions = LayoutOptions.Center
+            };
+
+            var firstNameLabel = new Label
+            {
+                Text = "Name:",
+                HorizontalOptions = LayoutOptions.Center
+            };
+
+            var firstNameEntry = new Entry
+            {
+                WidthRequest = 300
+            };
+
+            var lastNameLabel = new Label
+            {
+                Text = "Surname:",
+                HorizontalOptions = LayoutOptions.Center
+            };
+
+            var lastNameEntry = new Entry
+            {
+                WidthRequest = 300
+            };
+
+            var phoneNumberLabel = new Label
+            {
+                Text = "Phone Number:",
+                HorizontalOptions = LayoutOptions.Center
+            };
+
+            var phoneNumberEntry = new Entry
+            {
+                WidthRequest = 300
+            };
+
+            var addButton = new Button
+            {
+                Text = "Add",
+                WidthRequest = 300,
+                Margin = new Thickness(0, 25, 0, 0)
+            };
+
+            addButton.Clicked += async (sender, args) =>
+            {
+                try
+                {
+                    var newPerson = new Person(firstNameEntry.Text, lastNameEntry.Text, phoneNumberEntry.Text);
+                    contacts.Add(newPerson);
+                    mainPage.Contacts = contacts;
+
+                    await Navigation.PopModalAsync();
+                }
+                catch (ArgumentException ex)
+                {
+                    await DisplayAlert("Error occurred while adding new contact.", ex.Message, "Continue");
+                }
+            };
+
+            Content = new StackLayout
+            {
+                Padding = 20,
+                VerticalOptions = LayoutOptions.Center,
+                Children =
+            {
+                titleLabel,
+                firstNameLabel, firstNameEntry,
+                lastNameLabel, lastNameEntry,
+                phoneNumberLabel, phoneNumberEntry,
+                addButton
+            }
+            };
+        }
+    }
+
+
 }

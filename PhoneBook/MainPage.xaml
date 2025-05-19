@@ -14,25 +14,17 @@
 
             <FlexLayout  Margin="0,0,0,25" JustifyContent="SpaceBetween">
                 <StackLayout VerticalOptions="Center">
-                    <Label 
-                        Text="Name: "
-                        WidthRequest="300"/>        
-                    <Entry x:Name="FirstNameEntry" WidthRequest="300"/>
-
-                    <Label 
-                        Text="Surname: "
-                        WidthRequest="300"/>        
-                    <Entry x:Name="LastNameEntry" WidthRequest="300"/>
-
-                    <Label 
-                        Text="Phone Number: "
-                        WidthRequest="300"/>
-                    <Entry x:Name="PhoneNumberEntry" WidthRequest="300"/>
+                    <Button 
+                        Text="Add new Person"
+                        Clicked="OnAddButtonClicked"
+                        WidthRequest="300"
+                        Margin="0,25,0,0"/>
 
                     <Button 
-                        Text="Add"
-                        Clicked="AddPerson_Clicked"
+                        Text="Delete checked Person"
+                        Clicked="DeleteContact_Clicked"
                         WidthRequest="300"
+                        BackgroundColor="Red"
                         Margin="0,25,0,0"/>
                 </StackLayout>
 
@@ -78,27 +70,36 @@
 
                                 <!-- NAME -->
                                 <Label Grid.Column="0" Grid.Row="0" Text="Name:" 
-                           VerticalOptions="Center" HorizontalOptions="Start"/>
+                                        VerticalOptions="Center" HorizontalOptions="Start"/>
                                 <Label Grid.Column="1" Grid.Row="0" Text="{Binding FirstName}" 
-                           VerticalOptions="Center" HorizontalOptions="Start" />
+                                        VerticalOptions="Center" HorizontalOptions="Start" />
 
                                 <!-- SURNAME -->
                                 <Label Grid.Column="0" Grid.Row="1" Text="Surname:" 
-                           VerticalOptions="Center" HorizontalOptions="Start"/>
+                                        VerticalOptions="Center" HorizontalOptions="Start"/>
                                 <Label Grid.Column="1" Grid.Row="1" Text="{Binding LastName}" 
-                           VerticalOptions="Center" HorizontalOptions="Start" />
+                                        VerticalOptions="Center" HorizontalOptions="Start" />
 
                                 <!-- PHONE NUMBER -->
                                 <Label Grid.Column="0" Grid.Row="2" Text="Phone:" 
-                           VerticalOptions="Center" HorizontalOptions="Start"/>
+                                        VerticalOptions="Center" HorizontalOptions="Start"/>
                                 <Label Grid.Column="1" Grid.Row="2" Text="{Binding PhoneNumber}" 
-                           VerticalOptions="Center" HorizontalOptions="Start" />
+                                        VerticalOptions="Center" HorizontalOptions="Start" />
 
                                 <!-- ACTION BUTTONS -->
-                                <Button Grid.Column="0" Grid.Row="3" Clicked="DeleteContact_Clicked" Text="Delete" 
-                            BackgroundColor="Red" TextColor="White" Margin="0,5,0,0"/>
-                                <Button Grid.Column="1" Grid.Row="3" Clicked="OnEditButtonClicked" Text="Modify" 
-                            BackgroundColor="Blue" TextColor="White" Margin="0,5,0,0"/>
+                                <CheckBox Grid.Column="0" Grid.Row="3" CheckedChanged="CheckBox_ToDelete_CheckedChanged"
+                                        Margin="0,5,0,0"/>
+
+                                <FlyoutBase.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="Delete Contact"
+                                                    Clicked="DeleteContact_Clicked"
+                                                    CommandParameter="{Binding .}" />
+                                        <MenuFlyoutItem Text="Modify Contact"
+                                                    Clicked="OnEditButtonClicked"
+                                                    CommandParameter="{Binding .}" />
+                                    </MenuFlyout>
+                                </FlyoutBase.ContextFlyout>
                             </Grid>
                         </Frame>
                     </DataTemplate>
