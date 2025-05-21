@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.Maui.Layouts;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 
@@ -8,6 +9,15 @@ namespace PhoneBook
     {
         public ObservableCollection<Person> contacts_ = new ObservableCollection<Person>();
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        public static readonly BindableProperty IsNarrowProperty =
+        BindableProperty.Create(nameof(IsNarrow), typeof(bool), typeof(MainPage), false);
+
+        public bool IsNarrow
+        {
+            get => (bool)GetValue(IsNarrowProperty);
+            set => SetValue(IsNarrowProperty, value);
+        }
 
 
         public Collection<Person> ContactsToDelete { get; set; }
@@ -32,6 +42,10 @@ namespace PhoneBook
             Contacts = new ObservableCollection<Person>
             {
                 new Person("John", "Doe", "111-222-333"),
+                new Person("Jakub", "Uryga", "444-555-666"),
+                 new Person("John", "Doe", "111-222-333"),
+                new Person("Jakub", "Uryga", "444-555-666"),
+                 new Person("John", "Doe", "111-222-333"),
                 new Person("Jakub", "Uryga", "444-555-666")
             };
             ContactsToDelete = new Collection<Person>();
@@ -48,12 +62,63 @@ namespace PhoneBook
         }
 
 
+        //RESPONSIVE DESIGN
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            base.OnSizeAllocated(width, height);
+
+            IsNarrow = width > 600;
+
+
+            if (width < 600)
+            {
+                add_button.HorizontalOptions = LayoutOptions.Fill;
+                add_button.WidthRequest = width;
+
+                delete_button.HorizontalOptions = LayoutOptions.Fill;
+                delete_button.WidthRequest = width;
+
+                search_bar.HorizontalOptions = LayoutOptions.Fill;
+                search_bar.WidthRequest = width;
+
+                reset_filter_button.HorizontalOptions = LayoutOptions.Fill;
+                reset_filter_button.WidthRequest = width;
+
+                contacts_collection.WidthRequest = width;
+            }
+            else
+            { 
+                
+
+                add_button.WidthRequest = 300;
+                add_button.HorizontalOptions = LayoutOptions.Start;
+
+                delete_button.WidthRequest = 300;
+                delete_button.HorizontalOptions = LayoutOptions.Start;
+
+                search_bar.WidthRequest = 300;
+                search_bar.HorizontalOptions = LayoutOptions.Start;
+
+                reset_filter_button.WidthRequest = 300;
+                reset_filter_button.HorizontalOptions = LayoutOptions.Start;
+
+                contacts_collection.WidthRequest = 300;
+            }
+        }
+
+
         //DELETING
         private async void DeleteContact_Clicked(object sender, EventArgs e)
         {
             if (sender is Button)
             {
                 var button = (Button)sender;
+
+                if(button.AutomationId == "delete_mobile")
+                {
+                    Contacts.Remove((Person)button.BindingContext);
+                    return;
+                }
 
                 bool confirm = await DisplayAlert("Confirm", "Delete selected contacts?", "Yes", "No");
                 if (!confirm) return;
@@ -156,10 +221,23 @@ namespace PhoneBook
         private async void OnEditButtonClicked(object sender, EventArgs e)
         {
             ContactsToDelete.Clear();
-            var selectedPerson = (Person)((MenuFlyoutItem)sender).BindingContext;
-            if (selectedPerson != null)
+            if (sender is MenuFlyoutItem)
             {
-                await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson), this));
+                var menuItem = (MenuFlyoutItem)sender;
+                var selectedPerson = (Person)menuItem.BindingContext;
+                if (selectedPerson != null)
+                {
+                    await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson), this));
+                }
+            }
+            else if (sender is Button)
+            {
+                var button = (Button)sender;
+                var selectedPerson = (Person)button.BindingContext;
+                if (selectedPerson != null)
+                {
+                    await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson), this));
+                }
             }
         }
     }
