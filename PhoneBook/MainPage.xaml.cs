@@ -41,12 +41,10 @@ namespace PhoneBook
             InitializeComponent();
             Contacts = new ObservableCollection<Person>
             {
-                new Person("John", "Doe", "111-222-333"),
-                new Person("Jakub", "Uryga", "444-555-666"),
-                 new Person("John", "Doe", "111-222-333"),
-                new Person("Jakub", "Uryga", "444-555-666"),
-                 new Person("John", "Doe", "111-222-333"),
-                new Person("Jakub", "Uryga", "444-555-666")
+                new Person("John", "Doe", "123424221"),
+                new Person("Jakub", "Uryga", "21312213"),
+                new Person("Szymon", "Filipek", "56766575665"),
+                new Person("Tymoteusz", "Spokojny", "21093821321"),
             };
             ContactsToDelete = new Collection<Person>();
             BindingContext = this;
@@ -114,29 +112,19 @@ namespace PhoneBook
             {
                 var button = (Button)sender;
 
-                if(button.AutomationId == "delete_mobile")
-                {
-                    DeleteSingle((Person)button.BindingContext);
-                    return;
-                }
-                else
-                {
-                    await DeleteMultiple();
-                } 
-                    
+                await DeleteMultiple();  
             }
             else if (sender is MenuFlyoutItem menuItem)
             {
-
-                if(menuItem.AutomationId == "menuBar")
-                {
-                    await DeleteMultiple(); 
-                    return;
-                }
-                else
-                {
-                    DeleteSingle((Person)menuItem.CommandParameter);
-                }
+                DeleteSingle((Person)menuItem.CommandParameter);
+            }
+            else if (sender is ToolbarItem)
+            {
+                await DeleteMultiple();
+            }
+            else if (sender is SwipeItem swipeItem)
+            {
+                DeleteSingle((Person)swipeItem.BindingContext);
             }
         }
         private void CheckBox_ToDelete_CheckedChanged(object sender, CheckedChangedEventArgs e)
@@ -243,7 +231,7 @@ namespace PhoneBook
             if (sender is MenuFlyoutItem)
             {
                 var menuItem = (MenuFlyoutItem)sender;
-                var selectedPerson = (Person)menuItem.BindingContext;
+                var selectedPerson = (Person)menuItem.CommandParameter;
                 if (selectedPerson != null)
                 {
                     await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson), this));
@@ -253,6 +241,15 @@ namespace PhoneBook
             {
                 var button = (Button)sender;
                 var selectedPerson = (Person)button.BindingContext;
+                if (selectedPerson != null)
+                {
+                    await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson), this));
+                }
+            }
+            else if (sender is SwipeItem)
+            {
+                var swipeItem = (SwipeItem)sender;
+                var selectedPerson = (Person)swipeItem.BindingContext;
                 if (selectedPerson != null)
                 {
                     await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson), this));
