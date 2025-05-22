@@ -10,13 +10,13 @@ namespace PhoneBook
         public ObservableCollection<Person> contacts_ = new ObservableCollection<Person>();
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public static readonly BindableProperty IsNarrowProperty =
-        BindableProperty.Create(nameof(IsNarrow), typeof(bool), typeof(MainPage), false);
+        public static readonly BindableProperty IsWideProperty =
+        BindableProperty.Create(nameof(IsWide), typeof(bool), typeof(MainPage), false);
 
-        public bool IsNarrow
+        public bool IsWide
         {
-            get => (bool)GetValue(IsNarrowProperty);
-            set => SetValue(IsNarrowProperty, value);
+            get => (bool)GetValue(IsWideProperty);
+            set => SetValue(IsWideProperty, value);
         }
 
 
@@ -67,7 +67,7 @@ namespace PhoneBook
         {
             base.OnSizeAllocated(width, height);
 
-            IsNarrow = width > 600;
+            IsWide = width > 600;
 
 
             if (width < 600)
@@ -116,35 +116,26 @@ namespace PhoneBook
 
                 if(button.AutomationId == "delete_mobile")
                 {
-                    Contacts.Remove((Person)button.BindingContext);
+                    DeleteSingle((Person)button.BindingContext);
                     return;
                 }
-
-                bool confirm = await DisplayAlert("Confirm", "Delete selected contacts?", "Yes", "No");
-                if (!confirm) return;
-
-                if(ContactsToDelete.Count == 0)
+                else
                 {
-                    await DisplayAlert("Error", "No contacts selected for deletion.", "OK");
-                    return;
-                }
-
-                foreach (var PersonToDelete in ContactsToDelete)
-                {
-                    Contacts.Remove(PersonToDelete);
-                }
-                ContactsToDelete.Clear();
+                    await DeleteMultiple();
+                } 
+                    
             }
             else if (sender is MenuFlyoutItem menuItem)
             {
-                if (menuItem.CommandParameter is Person PersonToDelete)
-                {
-                    Contacts.Remove(PersonToDelete);
 
-                    if (ContactsToDelete.Contains(PersonToDelete))
-                    {
-                        ContactsToDelete.Remove(PersonToDelete);
-                    }
+                if(menuItem.AutomationId == "menuBar")
+                {
+                    await DeleteMultiple(); 
+                    return;
+                }
+                else
+                {
+                    DeleteSingle((Person)menuItem.CommandParameter);
                 }
             }
         }
@@ -162,6 +153,34 @@ namespace PhoneBook
                 {
                     ContactsToDelete.Add(PersonToDelete);
                 }
+            }
+        }
+
+        private async Task DeleteMultiple()
+        {
+            bool confirm = await DisplayAlert("Confirm", "Delete selected contacts?", "Yes", "No");
+            if (!confirm) return;
+
+            if (ContactsToDelete.Count == 0)
+            {
+                await DisplayAlert("Error", "No contacts selected for deletion.", "OK");
+                return;
+            }
+
+            foreach (var Ptd in ContactsToDelete)
+            {
+                Contacts.Remove(Ptd);
+            }
+            ContactsToDelete.Clear();
+        }
+
+        private void DeleteSingle(Person personToDelete)
+        {
+            Contacts.Remove(personToDelete);
+
+            if(ContactsToDelete.Contains(personToDelete))
+            {
+                ContactsToDelete.Remove(personToDelete);
             }
         }
 

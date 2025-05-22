@@ -4,6 +4,17 @@
              x:Class="PhoneBook.MainPage"
              xmlns:local="clr-namespace:PhoneBook"
              x:Name="RootPage">
+
+    <ContentPage.MenuBarItems>
+        <MenuBarItem Text="Add">
+            <MenuFlyoutItem Text="Add new Person"
+                Clicked="OnAddButtonClicked" />
+        </MenuBarItem>
+        <MenuBarItem Text="Delete">
+            <MenuFlyoutItem Text="Delete checked Persons"
+                Clicked="DeleteContact_Clicked" AutomationId="menuBar" />
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
     
     <ScrollView>
         
@@ -107,10 +118,10 @@
                                         WidthRequest="200"
                                         Margin="0,25,0,0">
                                         <Button.Triggers>
-                                            <DataTrigger TargetType="Button" Binding="{Binding Source={x:Reference RootPage}, Path=IsNarrow}" Value="True">
+                                            <DataTrigger TargetType="Button" Binding="{Binding Source={x:Reference RootPage}, Path=IsWide}" Value="True">
                                                 <Setter Property="IsVisible" Value="False"/>
                                             </DataTrigger>
-                                            <DataTrigger TargetType="Button" Binding="{Binding Source={x:Reference RootPage}, Path=IsNarrow}" Value="False">
+                                            <DataTrigger TargetType="Button" Binding="{Binding Source={x:Reference RootPage}, Path=IsWide}" Value="False">
                                                 <Setter Property="IsVisible" Value="True"/>
                                             </DataTrigger>
                                         </Button.Triggers>
@@ -125,10 +136,10 @@
                                         BackgroundColor="Red"
                                         Margin="0,5,0,0">
                                         <Button.Triggers>
-                                            <DataTrigger TargetType="Button" Binding="{Binding Source={x:Reference RootPage}, Path=IsNarrow}" Value="True">
+                                            <DataTrigger TargetType="Button" Binding="{Binding Source={x:Reference RootPage}, Path=IsWide}" Value="True">
                                                 <Setter Property="IsVisible" Value="False"/>
                                             </DataTrigger>
-                                            <DataTrigger TargetType="Button" Binding="{Binding Source={x:Reference RootPage}, Path=IsNarrow}" Value="False">
+                                            <DataTrigger TargetType="Button" Binding="{Binding Source={x:Reference RootPage}, Path=IsWide}" Value="False">
                                                 <Setter Property="IsVisible" Value="True"/>
                                             </DataTrigger>
                                         </Button.Triggers>
