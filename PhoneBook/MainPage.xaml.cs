@@ -7,20 +7,10 @@ namespace PhoneBook
 {
     public partial class MainPage : ContentPage, INotifyPropertyChanged
     {
-        public ObservableCollection<Person> contacts_ = new ObservableCollection<Person>();
         public event PropertyChangedEventHandler? PropertyChanged;
+        public ObservableCollection<Person> contacts_ = new ObservableCollection<Person>();
+        public ObservableCollection<Person> filteredContacts_ = new ObservableCollection<Person>();
 
-        public static readonly BindableProperty IsWideProperty =
-        BindableProperty.Create(nameof(IsWide), typeof(bool), typeof(MainPage), false);
-
-        public bool IsWide
-        {
-            get => (bool)GetValue(IsWideProperty);
-            set => SetValue(IsWideProperty, value);
-        }
-
-
-        public Collection<Person> ContactsToDelete { get; set; }
         public ObservableCollection<Person> Contacts 
         { 
             get => contacts_;
@@ -30,11 +20,13 @@ namespace PhoneBook
                 OnPropertyChanged(nameof(Contacts));
             }
         }
-
+        public ObservableCollection<Person> FilteredContacts { get; set; }
+        public Collection<Person> ContactsToDelete { get; set; }
         protected override void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
 
         public MainPage()
         {
@@ -47,6 +39,7 @@ namespace PhoneBook
                 new Person("Tymoteusz", "Spokojny", "21093821321"),
             };
             ContactsToDelete = new Collection<Person>();
+            FilteredContacts = new ObservableCollection<Person>();
             BindingContext = this;
         }
 
@@ -64,9 +57,6 @@ namespace PhoneBook
         protected override void OnSizeAllocated(double width, double height)
         {
             base.OnSizeAllocated(width, height);
-
-            IsWide = width > 600;
-
 
             if (width < 600)
             {
@@ -158,6 +148,7 @@ namespace PhoneBook
             foreach (var Ptd in ContactsToDelete)
             {
                 Contacts.Remove(Ptd);
+                FilteredContacts.Remove(Ptd);
             }
             ContactsToDelete.Clear();
         }
@@ -165,11 +156,9 @@ namespace PhoneBook
         private void DeleteSingle(Person personToDelete)
         {
             Contacts.Remove(personToDelete);
-
-            if(ContactsToDelete.Contains(personToDelete))
-            {
-                ContactsToDelete.Remove(personToDelete);
-            }
+            ContactsToDelete.Remove(personToDelete);
+            FilteredContacts.Remove(personToDelete);
+            
         }
 
 
@@ -179,18 +168,19 @@ namespace PhoneBook
             var searchString = search_bar.Text.ToLower();
             var collectionView = contacts_collection;
 
-            var filteredContacts = Contacts
+            FilteredContacts = new ObservableCollection<Person>(Contacts
                 .Where(c => c.FirstName.ToLower().Contains(searchString) || 
                 c.LastName.ToLower().Contains(searchString) || 
                 Regex.Replace(c.PhoneNumber.ToLower(), @"\D", "").Contains(searchString))
-                .ToList();
+                .ToList());
 
             collectionView.BindingContext = new
             {
-                Contacts = filteredContacts
+                Contacts = FilteredContacts
             };
 
-            if(searchString == "")
+
+            if (searchString == "")
             {
                 collectionView.BindingContext = new
                 {
@@ -228,6 +218,7 @@ namespace PhoneBook
         private async void OnEditButtonClicked(object sender, EventArgs e)
         {
             ContactsToDelete.Clear();
+
             if (sender is MenuFlyoutItem)
             {
                 var menuItem = (MenuFlyoutItem)sender;
@@ -255,6 +246,8 @@ namespace PhoneBook
                     await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson), this));
                 }
             }
+
+            ResetFilter_Clicked(null, EventArgs.Empty);
         }
     }
 

@@ -125,11 +125,11 @@
                                         <FlyoutBase.ContextFlyout>
                                             <MenuFlyout>
                                                 <MenuFlyoutItem Text="Delete Contact"
-                Clicked="DeleteContact_Clicked"
-                CommandParameter="{Binding .}" />
+                                                                Clicked="DeleteContact_Clicked"
+                                                                CommandParameter="{Binding .}" />
                                                 <MenuFlyoutItem Text="Modify Contact"
-                Clicked="OnEditButtonClicked"
-                CommandParameter="{Binding .}" />
+                                                                Clicked="OnEditButtonClicked"
+                                                                CommandParameter="{Binding .}" />
                                             </MenuFlyout>
                                         </FlyoutBase.ContextFlyout>
                                     </Grid>
