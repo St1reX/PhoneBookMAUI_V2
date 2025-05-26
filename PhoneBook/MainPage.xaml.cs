@@ -116,6 +116,16 @@ namespace PhoneBook
             {
                 DeleteSingle((Person)swipeItem.BindingContext);
             }
+
+            var collectionView = contacts_collection;
+
+            if (Contacts.Count == 0)
+            {
+                collectionView.BindingContext = new
+                {
+                    Contacts = Contacts
+                };
+            }
         }
         private void CheckBox_ToDelete_CheckedChanged(object sender, CheckedChangedEventArgs e)
         {
@@ -152,13 +162,11 @@ namespace PhoneBook
             }
             ContactsToDelete.Clear();
         }
-
         private void DeleteSingle(Person personToDelete)
         {
             Contacts.Remove(personToDelete);
             ContactsToDelete.Remove(personToDelete);
             FilteredContacts.Remove(personToDelete);
-            
         }
 
 
@@ -186,12 +194,16 @@ namespace PhoneBook
                 {
                     Contacts = Contacts
                 };
+
+                FilteredContacts.Clear();
             }
         }
-        private void ResetFilter_Clicked(object sender, EventArgs e)
+        public void ResetFilter_Clicked(object sender, EventArgs e)
         {
             var collectionView = contacts_collection;
             search_bar.Text = string.Empty;
+
+            FilteredContacts.Clear();
 
             collectionView.BindingContext = new
             {
@@ -246,8 +258,6 @@ namespace PhoneBook
                     await Navigation.PushModalAsync(new EditDataPage(Contacts, FindIndexToModify(selectedPerson), this));
                 }
             }
-
-            ResetFilter_Clicked(null, EventArgs.Empty);
         }
     }
 
@@ -324,6 +334,7 @@ namespace PhoneBook
 
                     //Refresh the contacts list on the main page
                     mainPage.Contacts = contacts;
+                    mainPage.ResetFilter_Clicked(null, EventArgs.Empty);
 
                     //Close modal
                     await Navigation.PopModalAsync();
@@ -402,6 +413,7 @@ namespace PhoneBook
                     var newPerson = new Person(firstNameEntry.Text, lastNameEntry.Text, phoneNumberEntry.Text);
                     contacts.Add(newPerson);
                     mainPage.Contacts = contacts;
+                    mainPage.ResetFilter_Clicked(null, EventArgs.Empty);
 
                     await Navigation.PopModalAsync();
                 }
